@@ -14,11 +14,11 @@ Untuk menambah branch
     
 $ alias graph="git log --all --decorate --oneline --graph"
 
-hi@LAPTOP-UB589FJT MINGW64 ~/OneDrive/Documents/profil (master)
+untuk mengganti branch
 $ git checkout catatan
 Switched to branch 'catatan'
 
-hi@LAPTOP-UB589FJT MINGW64 ~/OneDrive/Documents/profil (catatan)
+list
 $ git branch
 * catatan
   master
