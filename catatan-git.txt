@@ -23,4 +23,5 @@ $ git branch
 * catatan
   master
 
+UNTUK MERGE BRANCH
 git merge catatan
