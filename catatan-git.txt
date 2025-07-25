@@ -15,10 +15,12 @@ Untuk menambah branch
 $ alias graph="git log --all --decorate --oneline --graph"
 
 untuk mengganti branch
-$ git checkout catatan
-Switched to branch 'catatan'
+    $ git checkout catatan
+    Switched to branch 'catatan'
 
 list
 $ git branch
 * catatan
   master
+
+git merge catatan
