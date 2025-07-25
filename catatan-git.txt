@@ -1,0 +1,24 @@
+UNTUK MENAMBAHKAN FILE BARU 
+    1. git add .
+    2. git commit -m "..."
+
+Untuk Menambahkan File Modified
+    1. git commit -am "..."
+
+Untuk cek status
+    -git status
+
+Untuk menambah branch
+    -git branch(untuk cek semua branch)
+    -git branch nama_branch(untuk membuat branch baru)
+    
+$ alias graph="git log --all --decorate --oneline --graph"
+
+hi@LAPTOP-UB589FJT MINGW64 ~/OneDrive/Documents/profil (master)
+$ git checkout catatan
+Switched to branch 'catatan'
+
+hi@LAPTOP-UB589FJT MINGW64 ~/OneDrive/Documents/profil (catatan)
+$ git branch
+* catatan
+  master
