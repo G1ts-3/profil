@@ -25,3 +25,6 @@ $ git branch
 
 UNTUK MERGE BRANCH
 git merge catatan
+
+UNTUK CEK DARI GITHUB
+git fetch 
