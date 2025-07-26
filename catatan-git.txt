@@ -27,5 +27,7 @@ UNTUK MERGE BRANCH
 git merge catatan
 
 
+
 UNTUK MENGECEK DARI GITHUB ATAU APALAH ITU
 git fetch
+
