@@ -28,8 +28,11 @@ git merge catatan
 
 
 
-UNTUK MENGECEK DARI GITHUB ATAU APALAH ITU
+UNTUK MENGECEK ANTARA GITHUB DENGAN LOKAL
 git fetch
 
 #untuk ngirim ke remote
 git push 
+
+UNTUK SINGKRONIN REMOTE DENGAN LOKAL
+git pull
