@@ -31,3 +31,4 @@ git merge catatan
 UNTUK MENGECEK DARI GITHUB ATAU APALAH ITU
 git fetch
 
+git push "origin namabranch"
