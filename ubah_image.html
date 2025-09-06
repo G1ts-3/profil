@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengubah Latar Belakang Foto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .canvas-container {
+            border: 2px dashed #d1d5db;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto max-w-4xl w-full">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">Pengubah Latar Belakang Foto</h1>
+                <p class="text-gray-500 mt-2">Unggah foto Anda, pilih warna latar baru, dan lihat hasilnya secara instan.</p>
+            </div>
+
+            <!-- Input Controls -->
+            <div class="bg-gray-50 p-4 rounded-lg flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 mb-6">
+                <div>
+                    <label for="imageLoader" class="cursor-pointer bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                        Pilih Gambar
+                    </label>
+                    <input type="file" id="imageLoader" name="imageLoader" class="hidden" accept="image/*"/>
+                </div>
+                <div class="flex items-center gap-3">
+                    <label for="bgColor" class="text-sm font-medium text-gray-700">Warna Latar Baru:</label>
+                    <input type="color" id="bgColor" value="#db1514" class="w-10 h-10 rounded-md border-gray-300 cursor-pointer">
+                </div>
+                <div class="flex items-center gap-3">
+                    <label for="tolerance" class="text-sm font-medium text-gray-700">Toleransi:</label>
+                     <input type="range" id="tolerance" min="0" max="200" value="50" class="cursor-pointer">
+                     <span id="toleranceValue" class="text-sm font-medium text-gray-700 w-8 text-center">50</span>
+                </div>
+                <button id="changeBgBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                    Ubah Latar Belakang
+                </button>
+            </div>
+             <!-- Status Message -->
+            <div id="status" class="text-center text-gray-500 mb-4 h-5"></div>
+
+            <!-- Canvases -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="w-full">
+                    <h2 class="text-center text-lg font-semibold text-gray-700 mb-2">Asli</h2>
+                    <div class="canvas-container rounded-xl p-2 bg-gray-200">
+                         <canvas id="originalCanvas" class="w-full h-auto rounded-lg"></canvas>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <h2 class="text-center text-lg font-semibold text-gray-700 mb-2">Hasil</h2>
+                     <div class="canvas-container rounded-xl p-2 bg-gray-200">
+                        <canvas id="resultCanvas" class="w-full h-auto rounded-lg"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="text-center mt-6 text-gray-500 text-sm">
+            Dibuat dengan ❤️ oleh Gemini
+        </footer>
+    </div>
+
+    <script>
+        const imageLoader = document.getElementById('imageLoader');
+        const originalCanvas = document.getElementById('originalCanvas');
+        const resultCanvas = document.getElementById('resultCanvas');
+        const bgColorInput = document.getElementById('bgColor');
+        const changeBgBtn = document.getElementById('changeBgBtn');
+        const toleranceSlider = document.getElementById('tolerance');
+        const toleranceValueSpan = document.getElementById('toleranceValue');
+        const statusDiv = document.getElementById('status');
+        
+        const originalCtx = originalCanvas.getContext('2d');
+        const resultCtx = resultCanvas.getContext('2d');
+        let originalImage = null;
+
+        imageLoader.addEventListener('change', handleImage, false);
+        changeBgBtn.addEventListener('click', changeBackgroundColor);
+        toleranceSlider.addEventListener('input', () => {
+            toleranceValueSpan.textContent = toleranceSlider.value;
+        });
+
+        function handleImage(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Set canvas dimensions to match image
+                    originalCanvas.width = resultCanvas.width = img.width;
+                    originalCanvas.height = resultCanvas.height = img.height;
+                    
+                    // Draw image on original canvas
+                    originalCtx.drawImage(img, 0, 0);
+                    originalImage = img; // Store for later use
+                    
+                    // Clear the result canvas initially
+                    resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+                    
+                    // Enable the button
+                    changeBgBtn.disabled = false;
+                    statusDiv.textContent = "Gambar dimuat. Klik tombol untuk mengubah latar belakang.";
+                }
+                img.src = event.target.result;
+            }
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+                statusDiv.textContent = "Memuat gambar...";
+            }
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function changeBackgroundColor() {
+            if (!originalImage) {
+                 statusDiv.textContent = "Silakan pilih gambar terlebih dahulu.";
+                return;
+            }
+            
+            statusDiv.textContent = "Memproses...";
+            changeBgBtn.disabled = true;
+
+            // Use setTimeout to allow the UI to update before the heavy processing begins
+            setTimeout(() => {
+                const imgData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
+                const data = imgData.data;
+                
+                // Get the color of the top-left pixel as the color to replace
+                const bgR = data[0];
+                const bgG = data[1];
+                const bgB = data[2];
+
+                const newColor = hexToRgb(bgColorInput.value);
+                if (!newColor) {
+                    statusDiv.textContent = "Format warna tidak valid.";
+                    changeBgBtn.disabled = false;
+                    return;
+                }
+                
+                const tolerance = parseInt(toleranceSlider.value, 10);
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    // Calculate color difference (Euclidean distance)
+                    const diff = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2));
+                    
+                    if (diff < tolerance) {
+                        // Replace with new color
+                        data[i] = newColor.r;
+                        data[i + 1] = newColor.g;
+                        data[i + 2] = newColor.b;
+                    }
+                }
+                
+                resultCtx.putImageData(imgData, 0, 0);
+                statusDiv.textContent = "Latar belakang berhasil diubah!";
+                changeBgBtn.disabled = false;
+            }, 10);
+        }
+    </script>
+</body>
+</html>
